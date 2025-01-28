@@ -1,0 +1,7 @@
+name: FewerParkour
+version: '${project.version}'
+main: me.zombieman.dev.fewerparkour.FewerParkour
+api-version: '1.19'
+authors: [zombieman]
+commands:
+  parkour:
