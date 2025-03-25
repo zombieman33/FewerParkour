@@ -523,7 +523,7 @@ public class ParkourData {
                     <bold>INFO</bold>
                     Wasn't able to replace the checkpoint blocks since
                     they are the same as the current blocks.
-
+                    
                     <bold><underlined>Solution:</underlined></bold>
                      <bold>|</bold> This could because the replaced block
                      <bold>|</bold> is the same as the current blocks.
@@ -563,6 +563,7 @@ public class ParkourData {
         if (primeCheckpoint.equalsIgnoreCase("prime")) {
             checkpointBlock = primeCheckpointBlock;
         }
+
 
         for (String checkpoint : checkpoints) {
             String[] coords = checkpoint.split(",");
