@@ -3,6 +3,7 @@ package me.zombieman.dev.fewerparkour.listeners;
 import me.zombieman.dev.fewerparkour.FewerParkour;
 import me.zombieman.dev.fewerparkour.data.ParkourData;
 import me.zombieman.dev.fewerparkour.data.PlayerData;
+import me.zombieman.dev.fewerparkour.manager.LeaderboardManager;
 import me.zombieman.dev.fewerparkour.manager.ParkourManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -158,6 +159,16 @@ public class CheckpointsParkour implements Listener {
                 long elapsedTime = Instant.now().toEpochMilli() - startTime;
                 long minutes = (elapsedTime / 1000) / 60;
                 long seconds = (elapsedTime / 1000) % 60;
+
+
+                long currentBestTime = PlayerData.getPlayerDataConfig(plugin, playerUUID).getLong("bestTime." + activeParkour, Long.MAX_VALUE);
+                if (elapsedTime < currentBestTime) {
+                    LeaderboardManager.savePlayerTime(plugin, activeParkour, player, (int) elapsedTime);
+
+                    playerDataConfig.set("bestTime." + activeParkour, elapsedTime);
+                    PlayerData.savePlayerData(plugin, playerUUID);
+                }
+
                 String timeString = String.format("%02d:%02d", minutes, seconds);
 
                 int failedAmount = PlayerData.getPlayerDataConfig(plugin, playerUUID).getInt("Failed Amount." + activeParkour);

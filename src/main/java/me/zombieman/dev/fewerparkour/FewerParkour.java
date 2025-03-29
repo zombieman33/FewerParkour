@@ -3,8 +3,10 @@ package me.zombieman.dev.fewerparkour;
 import me.zombieman.dev.fewerparkour.commands.ParkourCmd;
 import me.zombieman.dev.fewerparkour.data.PlayerData;
 import me.zombieman.dev.fewerparkour.listeners.*;
+import me.zombieman.dev.fewerparkour.manager.LeaderboardManager;
 import me.zombieman.dev.fewerparkour.manager.ParkourManager;
 import me.zombieman.dev.fewerparkour.manager.TimeManager;
+import me.zombieman.dev.fewerparkour.placeholders.LeaderboardPlaceholder;
 import me.zombieman.dev.fewerparkour.placeholders.PlayerDataPlaceholder;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -28,6 +30,7 @@ public final class FewerParkour extends JavaPlugin {
     private ParkourCmd parkourCmd;
 
     private PlayerDataPlaceholder playerDataPlaceholder;
+    private LeaderboardPlaceholder leaderboardPlaceholder;
 
     public boolean DEBUG = false;
 
@@ -38,7 +41,11 @@ public final class FewerParkour extends JavaPlugin {
         playerDataPlaceholder = new PlayerDataPlaceholder(this);
         playerDataPlaceholder.register();
 
+        leaderboardPlaceholder = new LeaderboardPlaceholder(this);
+        leaderboardPlaceholder.register();
+
         PlayerData.initDataFolder(this);
+        LeaderboardManager.initDataFolder(this);
 
         PluginCommand plParkourCmd = this.getCommand("parkour");
         this.parkourCmd = new ParkourCmd(this);
