@@ -52,7 +52,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
                 ParkourData.createParkour(plugin, args[1], args[2], player);
 
             } else if (args[0].equalsIgnoreCase("delete")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.delete") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.delete") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -68,7 +68,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
                 ParkourData.deleteParkour(plugin, args[1], player);
 
             } else if (args[0].equalsIgnoreCase("list")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.list") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.list") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -77,7 +77,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
                 ParkourData.listParkour(plugin, player);
 
             } else if (args[0].equalsIgnoreCase("leave")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.leave") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.leave") && player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -85,7 +85,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
 
                 ParkourData.leaveParkour(plugin, player);
             } else if (args[0].equalsIgnoreCase("exit")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.exit") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.exit") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -93,7 +93,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
 
                 ParkourData.exitParkour(plugin, player, false);
             } else if (args[0].equalsIgnoreCase("setspawn")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.setspawn") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.setspawn") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -108,7 +108,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
                 ParkourData.setParkourSpawn(plugin, args[1], player);
 
             } else if (args[0].equalsIgnoreCase("replace")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.replace") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.replace") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -127,7 +127,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
                 }
 
             } else if (args[0].equalsIgnoreCase("respawn")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.respawn") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.respawn") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -136,7 +136,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
                 ParkourData.respawn(plugin, player);
 
             } else if (args[0].equalsIgnoreCase("addreward")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.addreward") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.addreward") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -153,7 +153,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
                 ParkourData.addReward(plugin, player, args[1], rewardCommand);
 
             } else if (args[0].equalsIgnoreCase("removereward")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.removereward") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.removereward") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
@@ -170,7 +170,7 @@ public class ParkourCmd implements CommandExecutor, TabCompleter {
                 ParkourData.removeReward(plugin, player, args[1], rewardCommand);
 
             } else if (args[0].equalsIgnoreCase("reload")) {
-                if (!player.hasPermission("fewerparkour.command.parkour.reload") || !player.hasPermission(adminPermission)) {
+                if (!player.hasPermission("fewerparkour.command.parkour.reload") && !player.hasPermission(adminPermission)) {
                     player.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                     player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
                     return false;
