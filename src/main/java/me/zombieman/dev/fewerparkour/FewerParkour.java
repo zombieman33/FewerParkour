@@ -33,6 +33,7 @@ public final class FewerParkour extends JavaPlugin {
     private LeaderboardPlaceholder leaderboardPlaceholder;
 
     public boolean DEBUG = false;
+    public boolean LINKING = false;
 
     @Override
     public void onEnable() {
@@ -86,80 +87,21 @@ public final class FewerParkour extends JavaPlugin {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
-                for (Player player : Bukkit.getOnlinePlayers()) {
-
-                    FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(FewerParkour.this, player.getUniqueId());
-
-                    if (playerDataConfig.getString("activeParkour") != null) {
-                        String latestCheckpointString = playerDataConfig.getString("latestCheckpointLocation." + playerDataConfig.getString("activeParkour"));
-
-                        if (latestCheckpointString != null) {
-
-                            if (player.isFlying() || player.isGliding()) {
-                                String[] parts = latestCheckpointString.split(",");
-                                if (parts.length == 4) {
-                                    String worldName = parts[0];
-                                    double checkpointX = Double.parseDouble(parts[1]);
-                                    double checkpointY = Double.parseDouble(parts[2]);
-                                    double checkpointZ = Double.parseDouble(parts[3]);
-
-                                    Location latestCheckpointLocation = new Location(Bukkit.getWorld(worldName), checkpointX, checkpointY, checkpointZ);
-
-                                    latestCheckpointLocation.setPitch(player.getLocation().getPitch());
-                                    latestCheckpointLocation.setYaw(player.getLocation().getYaw());
-                                    latestCheckpointLocation.setDirection(player.getLocation().getDirection());
-
-                                    player.teleport(latestCheckpointLocation);
-                                    player.sendMessage(MiniMessage.miniMessage().deserialize("""
-                                            <#FF0000><strikethrough>                                                  </strikethrough>
-                                            You were teleported back to your
-                                            checkpoint because you tried to fly!
-                                            <strikethrough>                                                  </strikethrough>"""));
-                                }
-                            }
-                        }
-                        player.setFlying(false);
-                    } else {
-                        player.setWalkSpeed(0.2f);
-                    }
-                }
+                checkParkour();
             }
         }, 0, 1);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
-
-                for (Player player : Bukkit.getOnlinePlayers()) {
-
-                    UUID playerUUID = player.getUniqueId();
-
-                    FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(FewerParkour.this, playerUUID);
-
-                    String parkour = playerDataConfig.getString("activeParkour");
-                    if (parkour != null) {
-
-                        if (!ParkourManager.parkourExists(FewerParkour.this, parkour)) {
-                            playerDataConfig.set("activeParkour", null);
-                            playerDataConfig.set("startTime", null);
-                            PlayerData.savePlayerData(FewerParkour.this, playerUUID);
-                            return;
-                        }
-
-                        long startTime = playerDataConfig.getLong("startTime");
-                        long elapsedTime = Instant.now().toEpochMilli() - startTime;
-
-                        long minutes = (elapsedTime / 1000) / 60;
-                        long seconds = (elapsedTime / 1000) % 60;
-                        String timeString = String.format("%02d:%02d", minutes, seconds);
-                        int failedAmount = PlayerData.getPlayerDataConfig(FewerParkour.this, playerUUID).getInt("Failed Amount." + parkour);
-
-                        player.sendActionBar(MiniMessage.miniMessage().deserialize("<#00FF00>Parkour Time: <underlined><bold>" + timeString + "</underlined><bold> Failed: <underlined><bold>" + failedAmount));
-                    }
-                }
+                timer();
             }
         }, 0, 1);
+
+        if (getServer().getPluginManager().getPlugin("DiscordLinkingPlus") != null) LINKING = true;
+
     }
+
     @Override
     public void onDisable() {
         // Plugin shutdown logic
@@ -175,4 +117,73 @@ public final class FewerParkour extends JavaPlugin {
 
     }
 
+    private void checkParkour() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+
+            FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(FewerParkour.this, player.getUniqueId());
+
+            if (playerDataConfig.getString("activeParkour") != null) {
+                String latestCheckpointString = playerDataConfig.getString("latestCheckpointLocation." + playerDataConfig.getString("activeParkour"));
+
+                if (latestCheckpointString != null) {
+
+                    if (player.isFlying() || player.isGliding()) {
+                        String[] parts = latestCheckpointString.split(",");
+                        if (parts.length == 4) {
+                            String worldName = parts[0];
+                            double checkpointX = Double.parseDouble(parts[1]);
+                            double checkpointY = Double.parseDouble(parts[2]);
+                            double checkpointZ = Double.parseDouble(parts[3]);
+
+                            Location latestCheckpointLocation = new Location(Bukkit.getWorld(worldName), checkpointX, checkpointY, checkpointZ);
+
+                            latestCheckpointLocation.setPitch(player.getLocation().getPitch());
+                            latestCheckpointLocation.setYaw(player.getLocation().getYaw());
+                            latestCheckpointLocation.setDirection(player.getLocation().getDirection());
+
+                            player.teleport(latestCheckpointLocation);
+                            player.sendMessage(MiniMessage.miniMessage().deserialize("""
+                                    <#FF0000><strikethrough>                                                  </strikethrough>
+                                    You were teleported back to your
+                                    checkpoint because you tried to fly!
+                                    <strikethrough>                                                  </strikethrough>"""));
+                        }
+                    }
+                }
+                player.setFlying(false);
+            } else {
+                player.setWalkSpeed(0.2f);
+            }
+        }
+    }
+
+    private void timer() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+
+            UUID playerUUID = player.getUniqueId();
+
+            FileConfiguration playerDataConfig = PlayerData.getPlayerDataConfig(FewerParkour.this, playerUUID);
+
+            String parkour = playerDataConfig.getString("activeParkour");
+            if (parkour != null) {
+
+                if (!ParkourManager.parkourExists(FewerParkour.this, parkour)) {
+                    playerDataConfig.set("activeParkour", null);
+                    playerDataConfig.set("startTime", null);
+                    PlayerData.savePlayerData(FewerParkour.this, playerUUID);
+                    return;
+                }
+
+                long startTime = playerDataConfig.getLong("startTime");
+                long elapsedTime = Instant.now().toEpochMilli() - startTime;
+
+                long minutes = (elapsedTime / 1000) / 60;
+                long seconds = (elapsedTime / 1000) % 60;
+                String timeString = String.format("%02d:%02d", minutes, seconds);
+                int failedAmount = PlayerData.getPlayerDataConfig(FewerParkour.this, playerUUID).getInt("Failed Amount." + parkour);
+
+                player.sendActionBar(MiniMessage.miniMessage().deserialize("<#00FF00>Parkour Time: <underlined><bold>" + timeString + "</underlined><bold> Failed: <underlined><bold>" + failedAmount));
+            }
+        }
+    }
 }

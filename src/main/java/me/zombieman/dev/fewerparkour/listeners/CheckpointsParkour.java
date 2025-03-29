@@ -1,5 +1,6 @@
 package me.zombieman.dev.fewerparkour.listeners;
 
+import me.zombieman.dev.discordlinkingplus.DiscordLinkingPlus;
 import me.zombieman.dev.fewerparkour.FewerParkour;
 import me.zombieman.dev.fewerparkour.data.ParkourData;
 import me.zombieman.dev.fewerparkour.data.PlayerData;
@@ -17,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -160,18 +162,21 @@ public class CheckpointsParkour implements Listener {
                 long minutes = (elapsedTime / 1000) / 60;
                 long seconds = (elapsedTime / 1000) % 60;
 
+                int failedAmount = PlayerData.getPlayerDataConfig(plugin, playerUUID).getInt("Failed Amount." + activeParkour);
+
+                String timeString = String.format("%02d:%02d", minutes, seconds);
 
                 long currentBestTime = PlayerData.getPlayerDataConfig(plugin, playerUUID).getLong("bestTime." + activeParkour, Long.MAX_VALUE);
                 if (elapsedTime < currentBestTime) {
                     LeaderboardManager.savePlayerTime(plugin, activeParkour, player, (int) elapsedTime);
 
+                    linkingMessage(plugin, playerUUID, activeParkour, failedAmount, timeString);
+
                     playerDataConfig.set("bestTime." + activeParkour, elapsedTime);
                     PlayerData.savePlayerData(plugin, playerUUID);
                 }
 
-                String timeString = String.format("%02d:%02d", minutes, seconds);
 
-                int failedAmount = PlayerData.getPlayerDataConfig(plugin, playerUUID).getInt("Failed Amount." + activeParkour);
 
                 Component completeMessage = MiniMessage.miniMessage().deserialize(String.format("""
                 <#00FF00><strikethrough>                                                                                </strikethrough>
@@ -269,6 +274,44 @@ public class CheckpointsParkour implements Listener {
             }
         }
     }
+
+    private void linkingMessage(FewerParkour plugin, UUID playerUUID, String activeParkour, int failedAmount, String timeString) {
+
+        if (!plugin.LINKING) return;
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+
+            try {
+                DiscordLinkingPlus discordLinkingPlus = DiscordLinkingPlus.getInstance();
+
+                String discordTag = null;
+
+                if (discordLinkingPlus.getApi().getDiscordTag(playerUUID) != null) discordTag = discordLinkingPlus.getApi().getDiscordTag(playerUUID);
+
+                if (discordTag == null) return;
+
+                String message = """
+                                🔥 **New Parkour Personal Best!** 🔥
+                                
+                                🏆 **Parkour:** `⛳ <parkour>`
+                                ❌ **Failed Attempts:** `💥 <failed_amount>`
+                                ⏱ **Time:** `⏳ <time_string>`
+                                """;
+
+                message = message
+                        .replace("<parkour>", activeParkour)
+                        .replace("<failed_amount>", String.valueOf(failedAmount))
+                        .replace("<time_string>", timeString);
+
+                message = discordLinkingPlus.getApi().formatMessage(message);
+
+                discordLinkingPlus.getApi().sendMessageToDiscordUser(discordTag, message);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     private boolean isPlayerOnCheckpoint(Player player, Location playerLocation, String parkour) {
         int playerX = playerLocation.getBlockX();
         int playerY = playerLocation.getBlockY();
