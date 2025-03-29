@@ -1,5 +1,7 @@
 package me.zombieman.dev.fewerparkour;
 
+import me.zombieman.dev.discordlinkingplus.DiscordLinkingPlus;
+import me.zombieman.dev.fewerparkour.API.API;
 import me.zombieman.dev.fewerparkour.commands.ParkourCmd;
 import me.zombieman.dev.fewerparkour.data.PlayerData;
 import me.zombieman.dev.fewerparkour.listeners.*;
@@ -32,12 +34,17 @@ public final class FewerParkour extends JavaPlugin {
     private PlayerDataPlaceholder playerDataPlaceholder;
     private LeaderboardPlaceholder leaderboardPlaceholder;
 
+    private API api;
+    private static FewerParkour instance;
+
     public boolean DEBUG = false;
     public boolean LINKING = false;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
+
+        instance = this;
 
         playerDataPlaceholder = new PlayerDataPlaceholder(this);
         playerDataPlaceholder.register();
@@ -84,6 +91,8 @@ public final class FewerParkour extends JavaPlugin {
         new CommandListener(this);
         new DamageListener(this);
 
+        api = new API(this);
+
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
             @Override
             public void run() {
@@ -115,6 +124,13 @@ public final class FewerParkour extends JavaPlugin {
             playerDataPlaceholder.unregister();
         }
 
+    }
+
+    public API getAPI() {
+        return api;
+    }
+    public static FewerParkour getInstance() {
+        return instance;
     }
 
     private void checkParkour() {

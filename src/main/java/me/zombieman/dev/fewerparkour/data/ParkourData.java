@@ -595,4 +595,12 @@ public class ParkourData {
 
         ParkourManager.setCheckpointBlock(plugin, primeCheckpoint, parkourName, newBlock);
     }
+
+    public static boolean isInParkour(FewerParkour plugin, UUID uuid) {
+        return PlayerData.getPlayerDataConfig(plugin, uuid).getString("activeParkour") != null;
+    }
+
+    public static String getParkour(FewerParkour plugin, UUID uuid) {
+        return PlayerData.getPlayerDataConfig(plugin, uuid).getString("activeParkour");
+    }
 }
