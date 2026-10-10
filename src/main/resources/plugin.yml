@@ -2,6 +2,9 @@ name: FewerParkour
 version: '${project.version}'
 main: me.zombieman.dev.fewerparkour.FewerParkour
 api-version: '1.19'
+
+depend: [PlaceholderAPI]
+softdepend: [DiscordLinkingPlus]
 authors: [zombieman]
 commands:
   parkour:

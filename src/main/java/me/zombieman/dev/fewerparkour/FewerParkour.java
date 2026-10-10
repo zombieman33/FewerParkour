@@ -53,6 +53,7 @@ public final class FewerParkour extends JavaPlugin {
         leaderboardPlaceholder.register();
 
         PlayerData.initDataFolder(this);
+        ParkourManager.initDataFolder(this);
         LeaderboardManager.initDataFolder(this);
 
         PluginCommand plParkourCmd = this.getCommand("parkour");
@@ -120,8 +121,11 @@ public final class FewerParkour extends JavaPlugin {
         }
         eventHandlers.clear();
 
-        if (playerDataPlaceholder != null) {
+        if (playerDataPlaceholder != null && getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             playerDataPlaceholder.unregister();
+        }
+        if (leaderboardPlaceholder != null && getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            leaderboardPlaceholder.unregister();
         }
 
     }

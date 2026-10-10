@@ -1,0 +1,7 @@
+# Build and initialization regression
+
+The Maven project declares provided Paper, PlaceholderAPI and optional DiscordLinkingPlus APIs. Build normally with Maven after resolving those APIs. The standalone build.py uses JDK25 and emits Java21 classes; set FEWER_JAVA_HOME and PARKOUR_BUILD_CLASSPATH to your JDK/API classpath. It never bundles provided plugins. Its cached-workspace fallback is for the existing local development checkout.
+
+The initialization fix declares PlaceholderAPI as a hard dependency, initializes the parkourData directory before commands can create a first course, and unregisters both expansions while the dependency is still available. Optional Discord integration remains optional and gets explicit load ordering. Gameplay, rewards, permissions and messages are otherwise unchanged.
+
+The isolated Paper fixture in tests/paper/ParkourProbe.java runs against a fresh plugin data folder and a disposable world. Compile it against Paper and the built plugin, then package it with a plugin.yml declaring name ParkourProbe, main ParkourProbe and depend [FewerParkour]. It verifies first-start course directory creation, dependency metadata, real create command, start/two checkpoint selection, exit, setspawn, persisted YAML and tab completion, then disables Parkour while PlaceholderAPI remains enabled. Run only on disposable local data, never a production server. The fixture changes test blocks/course/player data and shuts down the server.
